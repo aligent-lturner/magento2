@@ -406,26 +406,34 @@ class Payload extends  AbstractHelper
         $address = $quote->getBillingAddress();   
       }
 
-      $reference = $quote->getReservedOrderId() ? $quote->getReservedOrderId() : '0';
+      $reference = $quote->getReservedOrderId() ?: '0';
       $cart_reference = $quote->getId();
       $shipping_amount = $address ? $address->getShippingInclTax():0.00;
       $discount_amount = $address ? $address->getDiscountAmount():0.00;
       $tax_amount = $address ? $address->getTaxAmount():0.00;
-      $grand_total = $quote->getGrandTotal() ? $quote->getGrandTotal() : 0.00;
-      $currency = $quote->getQuoteCurrencyCode() ? $quote->getQuoteCurrencyCode() : null;
-      $gift_cards_amount = $quote->getGiftCardsAmount() ? $quote->getGiftCardsAmount() : 0; 
+      $grand_total = $quote->getGrandTotal() ?: 0.00;
+      $currency = $quote->getQuoteCurrencyCode() ?: null;
+      $gift_cards_amount = $quote->getGiftCardsAmount() ?: 0;
+      $rewards_points_amount = $quote->getRewardCurrencyAmount();
     } else if($order = $this->getOrder()){
-      $reference = $order->getIncrementId() ? $order->getIncrementId() : '0';
+      $reference = $order->getIncrementId() ?: '0';
       $shipping_amount = $order->getShippingAmount() ? $order->getShippingAmount()  + $order->getShippingTaxAmount() : 0;
-      $discount_amount = $order->getDiscountAmount() ? $order->getDiscountAmount() : 0;
-      $tax_amount = $order->getTaxAmount() ? $order->getTaxAmount() : 0;     
-      $gift_cards_amount = $order->getGiftCardsAmount() ? $order->getGiftCardsAmount() : 0;
+      $discount_amount = $order->getDiscountAmount() ?: 0;
+      $tax_amount = $order->getTaxAmount() ?: 0;
+      $gift_cards_amount = $order->getGiftCardsAmount() ?: 0;
+      $rewards_points_amount = $order->getRewardCurrencyAmount();
     }
     
     $this->_logger->debug("Gift Card Amount:- " . $gift_cards_amount);  
     
     if($gift_cards_amount){   
       $discount_amount -= $gift_cards_amount;   
+    }
+
+    $this->_logger->debug("Rewards Points Amount:= " . $rewards_points_amount);
+
+    if($rewards_points_amount){
+      $discount_amount -= $rewards_points_amount;
     }
 
     // Discount Item
