@@ -37,12 +37,7 @@ define(
             defaults: {
                 template: 'ZipMoney_ZipMoneyPayment/payment/zipmoney'
             },
-            setupWidget: function () {                    
-                if(window.$zmJs!=undefined){
-                    window.$zmJs._collectWidgetsEl(window.$zmJs);
-                }
-            },
-            initChildren: function () {         
+            initChildren: function () {
                 this.messageContainer = new Messages();
                 this.createMessagesComponent();
                 return this;
